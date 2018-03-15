@@ -197,7 +197,6 @@ if (typeof module !== undefined) module.exports = polyline;
 
 	L.Routing.ORS = L.Class.extend({
 		options: {
-			//serviceUrl: 'https://graphhopper.com/api/1/route',
 			serviceUrl: 'https://api.openrouteservice.org/directions',
 			timeout: 30 * 1000
 		},
@@ -219,12 +218,12 @@ if (typeof module !== undefined) module.exports = polyline;
 			url = this.buildRouteUrl(waypoints, options);
 
 			timer = setTimeout(function() {
-								timedOut = true;
-								callback.call(context || callback, {
-									status: -1,
-									message: 'GraphHopper request timed out.'
-								});
-							}, this.options.timeout);
+                                timedOut = true;
+                                callback.call(context || callback, {
+                                        status: -1,
+                                        message: 'Openrouteservice request timed out.'
+                                });
+                        }, this.options.timeout);
 
 			// Create a copy of the waypoints, since they
 			// might otherwise be asynchronously modified while
@@ -275,20 +274,15 @@ if (typeof module !== undefined) module.exports = polyline;
 				return;
 			}
 
-			//for (i = 0; i < response.paths.length; i++) {
 			for (i = 0; i < response.routes.length; i++) {
-				//path = response.paths[i];
 				path = response.routes[i];
-				//coordinates = this._decodePolyline(path.points);
 				coordinates = this._decodePolyline(path.geometry);
 				mappedWaypoints =
-					//this._mapWaypointIndices(inputWaypoints, path.instructions, coordinates);
 					this._mapWaypointIndices(inputWaypoints, path.segments, coordinates);
 
 				alts.push({
 					name: '',
 					coordinates: coordinates,
-					//instructions: this._convertInstructions(path.instructions),
 					instructions: this._convertInstructions(path.segments),
 					summary: {
 						totalDistance: path.summary.distance,
@@ -381,6 +375,7 @@ if (typeof module !== undefined) module.exports = polyline;
 					step = instr.steps[j];
 					result.push({
 						type: signToType[step.type],
+                                                modifier: signToType[step.type],
 						text: step.instruction,
 						distance: step.distance,
 						time: step.duration / 1000,
